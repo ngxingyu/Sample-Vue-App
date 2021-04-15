@@ -1,36 +1,46 @@
 <template>
-<div class="container">
-  <div id="app">
-    <h1>Life Advices</h1>
-    <div class='advices'>
-    <Advice v-for="advice in advices" :key="advice.id" :advice="advice" />
+  <div class="container">
+    <div id="app">
+      <h1>Life Advices</h1>
+      <Search :propQuery="query" @click="retrieveAdvice"/>
+      <div class="advices">
+        <Advice v-for="advice in advices" :key="advice.id" :advice="advice" />
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
-import Advice from './components/Advice.vue'
+import Advice from "./components/Advice.vue";
+import Search from "./components/Search.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    Advice
+    Advice,
+    Search,
   },
   data() {
     return {
-        advices:[{'advice':'...'}]
-    }
+      query: "life",
+      advices: [{ advice: "..." }],
+    };
   },
-  async created(){
-    fetch(`https://api.adviceslip.com/advice/search/life`)
-        .then(response => response.json())
-        .then(json => {
+  async created() {
+    this.retrieveAdvice(this.query);
+  },
+  methods: {
+    retrieveAdvice: function (query) {
+      this.query = query;
+      fetch(`https://api.adviceslip.com/advice/search/${query}`)
+        .then((response) => response.json())
+        .then((json) => {
           console.log(json);
           this.advices = json.slips;
-      });
-  }
-}
+        });
+    },
+  },
+};
 </script>
 
 <style>
@@ -42,12 +52,12 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 }
-.container{
-  padding:1em;
-  align-content:center;
+.container {
+  padding: 1em;
+  align-content: center;
 }
-.advices{
-  display: flex;  
+.advices {
+  display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
