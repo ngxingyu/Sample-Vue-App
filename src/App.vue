@@ -2,7 +2,7 @@
   <div class="container">
     <div id="app">
       <h1>Life Advices</h1>
-      <Search :propQuery="query" @click="retrieveAdvice"/>
+      <Search :propQuery="query" @click="retrieveAdvice" />
       <div class="advices">
         <Advice v-for="advice in advices" :key="advice.id" :advice="advice" />
       </div>
@@ -36,7 +36,9 @@ export default {
         .then((response) => response.json())
         .then((json) => {
           console.log(json);
-          this.advices = json.slips;
+          this.advices = !("slips" in json)
+            ? [{ advice: json.message.text }]
+            : json.slips;
         });
     },
   },

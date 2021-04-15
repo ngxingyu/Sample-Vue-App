@@ -16,6 +16,7 @@ export default {
   },
   methods: {
     handleInput() {
+      this.query=this.query.replace(/\W/g, '')
       if (!this.query || /^\s*$/.test(this.query)) {
         this.query = "life";
       }
