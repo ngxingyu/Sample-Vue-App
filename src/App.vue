@@ -2,44 +2,40 @@
   <div class="container">
     <div id="app">
       <h1>Life Advices</h1>
-      <Search :propQuery="query" @click="retrieveAdvice" />
-      <div class="advices">
-        <Advice v-for="advice in advices" :key="advice.id" :advice="advice" />
-      </div>
+      <Search :propQuery="query" @change="updateSearch" />
+      <Suspense>
+        <template #default>
+          <AdviceList ref="adviceList" :query="query" />
+        </template>
+        <template #fallback>
+          <p>Loading...</p>
+        </template>
+      </Suspense>
     </div>
   </div>
 </template>
 
 <script>
-import Advice from "./components/Advice.vue";
+import { ref } from "vue";
+import AdviceList from "./components/AdviceList.vue";
 import Search from "./components/Search.vue";
 
 export default {
   name: "App",
   components: {
-    Advice,
+    AdviceList,
     Search,
   },
-  data() {
+  setup() {
+    const query = ref("life");
     return {
-      query: "life",
-      advices: [{ advice: "..." }],
+      query,
     };
   },
-  async created() {
-    this.retrieveAdvice(this.query);
-  },
   methods: {
-    retrieveAdvice: function (query) {
+    updateSearch(query) {
+      console.log(query);
       this.query = query;
-      fetch(`https://api.adviceslip.com/advice/search/${query}`)
-        .then((response) => response.json())
-        .then((json) => {
-          console.log(json);
-          this.advices = !("slips" in json)
-            ? [{ advice: json.message.text }]
-            : json.slips;
-        });
     },
   },
 };
